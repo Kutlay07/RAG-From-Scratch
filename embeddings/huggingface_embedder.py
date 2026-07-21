@@ -2,6 +2,7 @@ from embeddings.base_embedder import BaseEmbedder
 from sentence_transformers import SentenceTransformer
 from typing import List
 from models.chunk import Chunk
+import numpy as np
 
 class HuggingFaceEmbedder(BaseEmbedder):
     def __init__(self, model_name, device, batch_size):
@@ -20,3 +21,10 @@ class HuggingFaceEmbedder(BaseEmbedder):
         for chunk, embedding in zip(chunks, embeddings):
             chunk.embedding = embedding
         return chunks
+    
+    def embed_text(self, text: str) -> np.ndarray:
+        return self.model.encode(
+            text,
+            convert_to_numpy=True,
+            normalize_embeddings=True
+        )
