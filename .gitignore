@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Hugging Face cache
+hf_cache/
+
+# Model cache
+models/
