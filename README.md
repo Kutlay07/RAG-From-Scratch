@@ -7,7 +7,9 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 ## Architecture
 
 <p align="center">
-    <img src="images/RAG-Architecture.png" width="850">
+
+![RAG Architecture](images/rag-architecture.png)
+
 </p>
 
 ---
