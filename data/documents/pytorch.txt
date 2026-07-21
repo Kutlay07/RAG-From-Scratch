@@ -1,0 +1,5 @@
+PyTorch is an open-source deep learning framework developed by Meta.
+
+It provides tensor operations, automatic differentiation, and GPU acceleration.
+
+PyTorch is commonly used for training neural networks and building artificial intelligence applications.

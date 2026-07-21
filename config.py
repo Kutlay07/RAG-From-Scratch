@@ -1,0 +1,21 @@
+DEVICE = "cuda"
+
+CHUNK_SIZE = 512
+OVERLAP = 64
+
+TOP_K = 5
+
+TOKENIZER_ENCODING = "gpt2"
+EMBEDDING_MODEL = "BAAI/bge-small-en-v1.5"
+RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+LLM_MODEL = "Qwen/Qwen2.5-0.5B-Instruct"
+
+EMBEDDING_BATCH_SIZE = 32
+RERANK_BATCH_SIZE = 32
+
+MAX_NEW_TOKENS = 256
+TEMPERATURE = 0.7
+
+DATA_PATH = "data/example.txt"
+
+QUERY = "What is RAG?"
