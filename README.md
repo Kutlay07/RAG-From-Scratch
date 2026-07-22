@@ -11,6 +11,8 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 
 </p>
 
+> 🚧 This project is actively under development. New features are added incrementally through versioned releases.
+
 ---
 
 ## Architecture
@@ -31,9 +33,11 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 - Recursive directory loading
 - Token-based chunking
 - Hugging Face sentence embeddings
-- Brute-force vector search
+- Embedding cache
+- FAISS vector search
+- Persistent FAISS index
 - Cross-Encoder reranking
-- Prompt construction
+- Prompt template system
 - Hugging Face LLM integration
 - Source references in answers
 - Dependency Injection architecture
@@ -46,11 +50,18 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 ```text
 RAG-From-Scratch
 │
+├── cache/
+│   └── embedding_cache.py
+│
 ├── data/
 │   └── documents/
 │
 ├── embeddings/
 ├── generation/
+│   ├── prompt_builder.py
+│   └── prompts/
+│       └── default.txt
+│
 ├── images/
 ├── ingestion/
 │   ├── text_loader.py
@@ -62,6 +73,10 @@ RAG-From-Scratch
 │
 ├── llm/
 ├── models/
+├── output/
+│   ├── cache/
+│   └── faiss/
+│
 ├── pipeline/
 ├── retrieval/
 ├── tokenization/
@@ -110,7 +125,7 @@ Supported formats:
 .html
 ```
 
-2. Configure models and parameters:
+2. Configure the models and parameters:
 
 ```python
 config.py
@@ -135,15 +150,17 @@ Document Loader
     ↓
 Chunker
     ↓
+Embedding Cache
+    ↓
 Embedder
     ↓
-Vector Store
+FAISS Vector Store
     ↓
 Retriever
     ↓
 Cross Encoder Reranker
     ↓
-Prompt Builder
+Prompt Template
     ↓
 LLM
     ↓
@@ -176,23 +193,24 @@ Response + Sources
 - Loader Factory
 - Multi-format document ingestion
 
-### v1.3 🚧
+### v1.3 ✅
 
-- FAISS Vector Store
-- Embedding cache
+- FAISS vector store
 - Persistent vector database
 
-### v1.4
+### v1.4 ✅
 
-- Streaming responses
-- Better prompt templates
-- Metadata filtering
+- Embedding cache
+- Prompt template system
+- Automatic FAISS reuse
 
-### v2.0
+### v2.0 🚀
 
+- ArXiv Loader
+- BM25 Search
 - Hybrid Search
 - Conversation Memory
-- Evaluation Pipeline
+- Chat UI
 - Agentic RAG
 
 ---
@@ -203,10 +221,23 @@ Response + Sources
 - PyTorch
 - Hugging Face Transformers
 - Sentence Transformers
+- FAISS
 - tiktoken
+- pypdf
+- BeautifulSoup4
+
+---
+
+## Demo
+
+Coming soon...
+
+- Chat UI
+- Agentic RAG
+- Hybrid Search
 
 ---
 
 ## License
 
-This project currently does not include a license.
+This project is licensed under the MIT License. See the LICENSE file for details.
