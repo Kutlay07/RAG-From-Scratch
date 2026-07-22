@@ -16,6 +16,6 @@ RERANK_BATCH_SIZE = 32
 MAX_NEW_TOKENS = 256
 TEMPERATURE = 0.7
 
-DATA_PATH = "data/example.txt"
+DOCUMENTS_PATH = "data/documents"
 
 QUERY = "What is RAG?"
