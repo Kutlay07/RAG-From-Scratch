@@ -1,4 +1,5 @@
-from ingestion.text_loader import TextLoader
+from ingestion.directory_loader import DirectoryLoader
+from ingestion.loader_factory import LoaderFactory
 from tokenization.tokenizer import Tokenizer
 from ingestion.chunker import Chunker
 from embeddings.huggingface_embedder import HuggingFaceEmbedder
@@ -7,14 +8,14 @@ from retrieval.retriever import Retriever
 from retrieval.cross_encoder_reranker import CrossEncoderReranker
 from llm.huggingface_llm import HuggingFaceLLM
 from pipeline.rag_pipeline import RAGPipeline
-from ingestion.directory_loader import DirectoryLoader
+
 import config
 
 
 def main():
     
-    loader = TextLoader()
-    directory_loader = DirectoryLoader(loader)
+    loader_factory = LoaderFactory()
+    directory_loader = DirectoryLoader(loader_factory)
     
     tokenizer = Tokenizer(config.TOKENIZER_ENCODING)
 
@@ -51,8 +52,8 @@ def main():
     )
     
     rag = RAGPipeline(
-        loader=loader,
         directory_loader=directory_loader,
+        loader_factory=loader_factory,
         chunker=chunker,
         embedder=embedder,
         vector_store=vector_store,
@@ -80,5 +81,7 @@ def main():
 
             print(f"- {chunk.document.title}")
             print(f"  {chunk.document.source}")
+
+
+if __name__ == "__main__":
     main()
-    

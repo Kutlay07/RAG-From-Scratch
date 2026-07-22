@@ -1,5 +1,5 @@
-from ingestion.text_loader import TextLoader
 from ingestion.directory_loader import DirectoryLoader
+from ingestion.loader_factory import LoaderFactory
 from ingestion.chunker import Chunker
 from embeddings.base_embedder import BaseEmbedder
 from vector_store.base_vector_store import BaseVectorStore
@@ -10,13 +10,13 @@ from generation.prompt_builder import build_prompt
 from models.document import Document
 from models.chunk import Chunk
 from typing import List, Tuple
-
+from pathlib import Path
 
 class RAGPipeline:
     
     def __init__(self,
-                loader: TextLoader,
                 directory_loader: DirectoryLoader,
+                loader_factory: LoaderFactory,
                 chunker: Chunker,
                 embedder: BaseEmbedder,
                 vector_store: BaseVectorStore,
@@ -24,8 +24,8 @@ class RAGPipeline:
                 reranker: BaseReranker,
                 llm: BaseLLM):
         
-        self.loader = loader
         self.directory_loader = directory_loader
+        self.loader_factory = loader_factory
         self.chunker = chunker
         self.embedder = embedder
         self.vector_store = vector_store
@@ -43,7 +43,9 @@ class RAGPipeline:
     
     
     def ingest(self, path: str) -> None:
-        document = self.loader.load(path)
+        path = Path(path)
+        loader = self.loader_factory.get_loader(path)
+        document = loader.load(path)
         
         self._ingest_document(document)
     
