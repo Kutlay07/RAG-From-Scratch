@@ -3,11 +3,12 @@ from ingestion.loader_factory import LoaderFactory
 from tokenization.tokenizer import Tokenizer
 from ingestion.chunker import Chunker
 from embeddings.huggingface_embedder import HuggingFaceEmbedder
-from vector_store.brute_force_vector_store import BruteForceVectorStore
+from vector_store.faiss_vector_store import FAISSVectorStore
 from retrieval.retriever import Retriever
 from retrieval.cross_encoder_reranker import CrossEncoderReranker
 from llm.huggingface_llm import HuggingFaceLLM
 from pipeline.rag_pipeline import RAGPipeline
+from pathlib import Path
 
 import config
 
@@ -31,7 +32,7 @@ def main():
         batch_size=config.EMBEDDING_BATCH_SIZE,
     )
 
-    vector_store = BruteForceVectorStore()
+    vector_store = FAISSVectorStore(dimension=config.EMBEDDING_DIMENSION)
     
     retriever = Retriever(
         embedder=embedder,
@@ -61,7 +62,18 @@ def main():
         reranker=reranker,
         llm=llm,
     )
-    rag.ingest_directory(config.DOCUMENTS_PATH)
+    
+    index_path = Path(config.VECTOR_STORE_PATH)
+
+
+    if (index_path / "index.faiss").exists():
+        print("Loading existing FAISS index...")
+        vector_store.load(config.VECTOR_STORE_PATH)
+
+    else:
+        print("Building FAISS index...")
+        rag.ingest_directory(config.DOCUMENTS_PATH)
+        vector_store.save(config.VECTOR_STORE_PATH)
 
     answer, chunks = rag.ask(
         query=config.QUERY,

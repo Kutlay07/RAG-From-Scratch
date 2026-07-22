@@ -19,9 +19,13 @@ class DirectoryLoader:
             
         for file in tqdm(files, desc="Loading documents"):
             loader = self.loader_factory.get_loader(file)
-            document = loader.load(file)
-            documents.append(document)
-            
+            try:
+                document = loader.load(file)
+                documents.append(document)
+
+            except Exception as e:
+                print(f"Skipping {file}: {e}")
+                
         print(f"Successfully loaded {len(documents)} documents.")
 
         return documents

@@ -20,7 +20,7 @@ class LoaderFactory:
     def get_loader(self, path: Path):
         suffix = path.suffix.lower()
         
-        loader = self.loaders.get(suffix)
+        loader = self._loaders.get(suffix)
         
         if loader is None:
             raise ValueError(f"Unsupported file type: {suffix}")
