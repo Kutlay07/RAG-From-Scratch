@@ -62,13 +62,23 @@ def main():
     )
     rag.ingest_directory(config.DOCUMENTS_PATH)
 
-    answer = rag.ask(
+    answer, chunks = rag.ask(
         query=config.QUERY,
         top_k=config.TOP_K,
     )
 
     print(answer)
+    print("\nSources:")
 
-if __name__ == "__main__":
+    seen = set()
+
+    for chunk in chunks:
+        key = (chunk.document.title, chunk.document.source)
+
+        if key not in seen:
+            seen.add(key)
+
+            print(f"- {chunk.document.title}")
+            print(f"  {chunk.document.source}")
     main()
     

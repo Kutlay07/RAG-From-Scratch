@@ -8,6 +8,8 @@ from retrieval.base_reranker import BaseReranker
 from llm.base_llm import BaseLLM
 from generation.prompt_builder import build_prompt
 from models.document import Document
+from models.chunk import Chunk
+from typing import List, Tuple
 
 
 class RAGPipeline:
@@ -31,12 +33,14 @@ class RAGPipeline:
         self.reranker = reranker
         self.llm = llm
         
-    def _ingest_document(self, document: Document) -> None:
-        chunks = self.chunker.split(document)
-    
-        chunks = self.embedder.embed_chunks(chunks)
         
+    def _ingest_document(self, document: Document) -> int:
+        chunks = self.chunker.split(document)
+        chunks = self.embedder.embed_chunks(chunks)
         self.vector_store.add_chunks(chunks)
+        
+        return len(chunks)
+    
     
     def ingest(self, path: str) -> None:
         document = self.loader.load(path)
@@ -45,10 +49,15 @@ class RAGPipeline:
     
     def ingest_directory(self, directory: str) -> None:
         documents = self.directory_loader.load(directory)
-        for document in documents:
-            self._ingest_document(document)
+        total_chunks = 0
 
-    def ask(self, query: str, top_k: int = 5) -> str:
+        for document in documents:
+            total_chunks += self._ingest_document(document)
+
+        print(f"Indexed {total_chunks} chunks.")
+        
+        
+    def ask(self, query: str, top_k: int = 5) -> Tuple[str, List[Chunk]]:
         # Question -> Retriever -> Reranker -> PromptBuilder -> LLM -> Answer
         chunks = self.retriever.retrieve(query, top_k)
         
@@ -58,5 +67,4 @@ class RAGPipeline:
         
         answer = self.llm.generate(prompt)
         
-        return answer
-    
+        return answer, chunks
