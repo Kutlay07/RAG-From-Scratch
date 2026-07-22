@@ -3,3 +3,6 @@ transformers
 sentence-transformers
 tiktoken
 numpy
+pypdf
+beautifulsoup4
+tqdm

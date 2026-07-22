@@ -1,6 +1,15 @@
 # RAG-From-Scratch
 
-A modular Retrieval-Augmented Generation (RAG) system implemented from scratch using Hugging Face models and clean software architecture principles.
+A modular Retrieval-Augmented Generation (RAG) system implemented from scratch using Hugging Face models with clean software architecture principles.
+
+<p align="center">
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.x-EE4C2C?logo=pytorch&logoColor=white)
+![HuggingFace](https://img.shields.io/badge/HuggingFace-Models-yellow?logo=huggingface)
+![Status](https://img.shields.io/badge/Status-Ongoing-blue)
+
+</p>
 
 ---
 
@@ -17,13 +26,16 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 ## Features
 
 - Modular RAG architecture
-- Text document ingestion
+- Multi-format document ingestion
+- TXT, PDF, Markdown, and HTML loaders
+- Recursive directory loading
 - Token-based chunking
 - Hugging Face sentence embeddings
 - Brute-force vector search
 - Cross-Encoder reranking
 - Prompt construction
 - Hugging Face LLM integration
+- Source references in answers
 - Dependency Injection architecture
 - Easily extensible design
 
@@ -35,10 +47,19 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 RAG-From-Scratch
 │
 ├── data/
+│   └── documents/
+│
 ├── embeddings/
 ├── generation/
 ├── images/
 ├── ingestion/
+│   ├── text_loader.py
+│   ├── pdf_loader.py
+│   ├── markdown_loader.py
+│   ├── html_loader.py
+│   ├── directory_loader.py
+│   └── loader_factory.py
+│
 ├── llm/
 ├── models/
 ├── pipeline/
@@ -56,11 +77,17 @@ RAG-From-Scratch
 
 ## Installation
 
+Clone the repository:
+
 ```bash
 git clone https://github.com/Kutlay07/RAG-From-Scratch.git
 
 cd RAG-From-Scratch
+```
 
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
@@ -68,9 +95,26 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. Put your documents inside the `data/documents/` directory.
+1. Add your documents into:
 
-2. Configure the models in `config.py`.
+```text
+data/documents/
+```
+
+Supported formats:
+
+```text
+.txt
+.pdf
+.md
+.html
+```
+
+2. Configure models and parameters:
+
+```python
+config.py
+```
 
 3. Run:
 
@@ -85,7 +129,9 @@ python main.py
 ```text
 Documents
     ↓
-Loader
+Loader Factory
+    ↓
+Document Loader
     ↓
 Chunker
     ↓
@@ -95,48 +141,72 @@ Vector Store
     ↓
 Retriever
     ↓
-Reranker
+Cross Encoder Reranker
     ↓
 Prompt Builder
     ↓
 LLM
     ↓
-Response
+Response + Sources
 ```
 
 ---
 
 ## Roadmap
 
-### v1.0
+### v1.0 ✅
 
-- ✅ End-to-end RAG pipeline
-- ✅ Hugging Face Embeddings
-- ✅ Cross Encoder Reranking
-- ✅ Brute Force Vector Store
+- End-to-end RAG pipeline
+- Hugging Face embeddings
+- Cross Encoder reranking
+- Brute-force vector store
 
-### v1.1
+### v1.1 ✅
 
-- ⬜ Directory Loader
-- ⬜ PDF Loader
-- ⬜ Markdown Loader
-- ⬜ Better Prompt Templates
+- Recursive directory ingestion
+- Progress tracking
+- Document statistics
+- Source references
 
-### v1.2
+### v1.2 ✅
 
-- ⬜ FAISS Vector Store
-- ⬜ Embedding Cache
-- ⬜ Streaming Responses
+- PDF Loader
+- Markdown Loader
+- HTML Loader
+- Loader Factory
+- Multi-format document ingestion
+
+### v1.3 🚧
+
+- FAISS Vector Store
+- Embedding cache
+- Persistent vector database
+
+### v1.4
+
+- Streaming responses
+- Better prompt templates
+- Metadata filtering
 
 ### v2.0
 
-- ⬜ Hybrid Search
-- ⬜ Conversation Memory
-- ⬜ Evaluation Pipeline
-- ⬜ Agentic RAG
+- Hybrid Search
+- Conversation Memory
+- Evaluation Pipeline
+- Agentic RAG
+
+---
+
+## Tech Stack
+
+- Python
+- PyTorch
+- Hugging Face Transformers
+- Sentence Transformers
+- tiktoken
 
 ---
 
 ## License
 
-MIT License
+This project currently does not include a license.
