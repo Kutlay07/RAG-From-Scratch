@@ -1,24 +1,27 @@
+from pathlib import Path
 from typing import List
+
 from models.chunk import Chunk
 
-
-def build_prompt(query, chunks):
+PROMPT_DIR = Path(__file__).parent / "prompts"
+def load_prompt(name: str) -> str:
+    prompt_path = PROMPT_DIR / f"{name}.txt"
+    
+    with open(prompt_path, "r", encoding="utf-8") as f:
+        return f.read()
+    
+    
+def build_prompt(query: str, chunks: List[Chunk]) -> str:
 
     context = "\n\n".join(
         chunk.text for chunk in chunks
     )
-
-    prompt = f"""You are a helpful AI assistant.
-
-Answer the question using ONLY the context below.
-
-Context:
-{context}
-
-Question:
-{query}
-
-Answer:
-"""
+    
+    template = load_prompt("default")
+    
+    prompt = template.format(
+        context = context,
+        query = query,
+    )
 
     return prompt

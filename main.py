@@ -9,6 +9,7 @@ from retrieval.cross_encoder_reranker import CrossEncoderReranker
 from llm.huggingface_llm import HuggingFaceLLM
 from pipeline.rag_pipeline import RAGPipeline
 from pathlib import Path
+from cache.embedding_cache import EmbeddingCache
 
 import config
 
@@ -17,6 +18,8 @@ def main():
     
     loader_factory = LoaderFactory()
     directory_loader = DirectoryLoader(loader_factory)
+    
+    cache = EmbeddingCache(cache_dir=config.CACHE_PATH)
     
     tokenizer = Tokenizer(config.TOKENIZER_ENCODING)
 
@@ -30,6 +33,7 @@ def main():
         model_name=config.EMBEDDING_MODEL,
         device=config.DEVICE,
         batch_size=config.EMBEDDING_BATCH_SIZE,
+        cache=cache
     )
 
     vector_store = FAISSVectorStore(dimension=config.EMBEDDING_DIMENSION)

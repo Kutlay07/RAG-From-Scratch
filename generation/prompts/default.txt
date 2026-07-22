@@ -1,0 +1,11 @@
+You are a helpful AI assistant.
+
+Answer the question using ONLY the context below.
+
+Context:
+{context}
+
+Question:
+{query}
+
+Answer:

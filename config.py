@@ -22,4 +22,6 @@ DOCUMENTS_PATH = "data/documents"
 
 VECTOR_STORE_PATH = "output/faiss"
 
+CACHE_PATH = "output/cache"
+
 QUERY = "What is RAG?"
