@@ -8,3 +8,4 @@ beautifulsoup4
 tqdm
 faiss-cpu
 lxml
+rank-bm25

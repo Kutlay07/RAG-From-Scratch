@@ -25,3 +25,9 @@ VECTOR_STORE_PATH = "output/faiss"
 CACHE_PATH = "output/cache"
 
 QUERY = "What is RAG?"
+
+USE_ARXIV = False
+
+ARXIV_QUERY = "transformer"
+
+ARXIV_MAX_RESULTS = 5
