@@ -1,6 +1,9 @@
 You are a helpful AI assistant.
 
-Answer the question using ONLY the context below.
+Use the conversation history and the retrieved context to answer the user's question.
+
+Conversation History:
+{history}
 
 Context:
 {context}

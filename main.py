@@ -13,6 +13,7 @@ from llm.huggingface_llm import HuggingFaceLLM
 from pipeline.rag_pipeline import RAGPipeline
 from pathlib import Path
 from cache.embedding_cache import EmbeddingCache
+from memory.conversation_memory import ConversationMemory
 
 import config
 
@@ -67,6 +68,8 @@ def main():
         temperature=config.TEMPERATURE,
     )
     
+    memory = ConversationMemory()
+    
     rag = RAGPipeline(
         directory_loader=directory_loader,
         arxiv_loader=arxiv_loader,
@@ -77,6 +80,7 @@ def main():
         hybrid_retriever=hybrid_retriever,
         reranker=reranker,
         llm=llm,
+        memory=memory,
     )
     
     index_path = Path(config.VECTOR_STORE_PATH)
@@ -105,24 +109,37 @@ def main():
         hybrid_retriever.build_index(
             vector_store.chunks
         )
-    answer, chunks = rag.ask(
-        query=config.QUERY,
-        top_k=config.TOP_K,
-    )
+        
+    while True:
 
-    print(answer)
-    print("\nSources:")
+        query = input("\nYou: ")
 
-    seen = set()
+        if query.lower() in ["exit", "quit"]:
+            break
 
-    for chunk in chunks:
-        key = (chunk.document.title, chunk.document.source)
+        answer, chunks = rag.ask(
+            query=query,
+            top_k=config.TOP_K,
+        )
 
-        if key not in seen:
-            seen.add(key)
+        print("\nAssistant:")
+        print(answer)
 
-            print(f"- {chunk.document.title}")
-            print(f"  {chunk.document.source}")
+        print("\nSources:")
+
+        seen = set()
+
+        for chunk in chunks:
+            key = (
+                chunk.document.title,
+                chunk.document.source,
+            )
+
+            if key not in seen:
+                seen.add(key)
+
+                print(f"- {chunk.document.title}")
+                print(f"  {chunk.document.source}")
 
 
 if __name__ == "__main__":

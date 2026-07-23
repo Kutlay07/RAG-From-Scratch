@@ -12,6 +12,7 @@ from typing import List, Tuple
 from pathlib import Path
 from ingestion.arxiv_loader import ArxivLoader
 from retrieval.hybrid_retriever import HybridRetriever
+from memory.conversation_memory import ConversationMemory
 
 class RAGPipeline:
     
@@ -24,7 +25,8 @@ class RAGPipeline:
                 vector_store: BaseVectorStore,
                 hybrid_retriever: HybridRetriever,
                 reranker: BaseReranker,
-                llm: BaseLLM):
+                llm: BaseLLM,
+                memory: ConversationMemory):
         
         self.directory_loader = directory_loader
         self.arxiv_loader = arxiv_loader
@@ -36,6 +38,7 @@ class RAGPipeline:
         self.all_chunks = []
         self.reranker = reranker
         self.llm = llm
+        self.memory = memory
         
         
     def _ingest_document(self, document: Document) -> int:
@@ -85,13 +88,22 @@ class RAGPipeline:
         
         
     def ask(self, query: str, top_k: int = 5) -> Tuple[str, List[Chunk]]:
-        # Question -> Retriever -> Reranker -> PromptBuilder -> LLM -> Answer
+        self.memory.add_user_message(query)
+        
         chunks = self.hybrid_retriever.search(query, top_k)
         
         chunks = self.reranker.rerank(query, chunks, top_k)
         
-        prompt = build_prompt(query, chunks)
+        history = self.memory.get_context()
+        
+        prompt = build_prompt(
+            query = query,
+            chunks = chunks,
+            history = history,
+        )
         
         answer = self.llm.generate(prompt)
+        
+        self.memory.add_assistant_message(answer)
         
         return answer, chunks

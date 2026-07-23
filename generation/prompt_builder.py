@@ -11,7 +11,7 @@ def load_prompt(name: str) -> str:
         return f.read()
     
     
-def build_prompt(query: str, chunks: List[Chunk]) -> str:
+def build_prompt(query: str, chunks: List[Chunk], history: str) -> str:
 
     context = "\n\n".join(
         chunk.text for chunk in chunks
@@ -20,6 +20,7 @@ def build_prompt(query: str, chunks: List[Chunk]) -> str:
     template = load_prompt("default")
     
     prompt = template.format(
+        history = history,
         context = context,
         query = query,
     )
