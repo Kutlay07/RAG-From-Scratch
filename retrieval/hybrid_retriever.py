@@ -31,18 +31,43 @@ class HybridRetriever:
             candidate_k
         )
         
-        combined = []
-        seen = set()
+        rrf_scores = {}
         
-        for chunk in vector_results + bm25_results:
+        k = 60
+        
+        for rank, chunk in enumerate(vector_results, start=1):
+            key = (
+                chunk.document.source,
+                chunk.chunk_index,
+            )
+            
+            rrf_scores[key] = {
+                "chunk": chunk,
+                "score": 1 / (k + rank)
+            }
+            
 
+            
+        for rank, chunk in enumerate(bm25_results, start=1):
             key = (
                 chunk.document.source,
                 chunk.chunk_index
-            )
+                )
             
-            if key not in seen:
-                seen.add(key)
-                combined.append(chunk)
+            score = 1 / (k + rank)
+            
+            if key in rrf_scores:
+                rrf_scores[key]["score"] += score
+            else:
+                rrf_scores[key] = {
+                    "chunk": chunk,
+                    "score": score,
+                }
                 
-        return combined[:top_k]
+        sorted_results = sorted(
+            rrf_scores.values(),
+            key=lambda item: item["score"],
+            reverse=True,
+        )
+        
+        return [item["chunk"] for item in sorted_results[:top_k]]
