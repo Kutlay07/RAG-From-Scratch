@@ -14,6 +14,7 @@ from pipeline.rag_pipeline import RAGPipeline
 from pathlib import Path
 from cache.embedding_cache import EmbeddingCache
 from memory.conversation_memory import ConversationMemory
+from rewriter.query_rewriter import QueryRewriter
 
 import config
 
@@ -68,6 +69,8 @@ def main():
         temperature=config.TEMPERATURE,
     )
     
+    query_rewriter = QueryRewriter(llm)
+    
     memory = ConversationMemory()
     
     rag = RAGPipeline(
@@ -80,6 +83,7 @@ def main():
         hybrid_retriever=hybrid_retriever,
         reranker=reranker,
         llm=llm,
+        query_rewriter=query_rewriter,
         memory=memory,
     )
     

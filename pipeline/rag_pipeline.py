@@ -13,6 +13,7 @@ from pathlib import Path
 from ingestion.arxiv_loader import ArxivLoader
 from retrieval.hybrid_retriever import HybridRetriever
 from memory.conversation_memory import ConversationMemory
+from rewriter.query_rewriter import QueryRewriter
 
 class RAGPipeline:
     
@@ -26,7 +27,8 @@ class RAGPipeline:
                 hybrid_retriever: HybridRetriever,
                 reranker: BaseReranker,
                 llm: BaseLLM,
-                memory: ConversationMemory):
+                memory: ConversationMemory,
+                query_rewriter: QueryRewriter):
         
         self.directory_loader = directory_loader
         self.arxiv_loader = arxiv_loader
@@ -39,6 +41,7 @@ class RAGPipeline:
         self.reranker = reranker
         self.llm = llm
         self.memory = memory
+        self.query_rewriter = query_rewriter
         
         
     def _ingest_document(self, document: Document) -> int:
@@ -90,12 +93,17 @@ class RAGPipeline:
     def ask(self, query: str, top_k: int = 5) -> Tuple[str, List[Chunk]]:
         self.memory.add_user_message(query)
         
-        chunks = self.hybrid_retriever.search(query, top_k)
-        
-        chunks = self.reranker.rerank(query, chunks, top_k)
-        
         history = self.memory.get_context()
         
+        rewritten_query = self.query_rewriter.rewrite(
+            query = query,
+            history = history,
+        )
+        
+        chunks = self.hybrid_retriever.search(rewritten_query, top_k)
+        
+        chunks = self.reranker.rerank(rewritten_query, chunks, top_k)
+
         prompt = build_prompt(
             query = query,
             chunks = chunks,
