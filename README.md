@@ -36,8 +36,15 @@ A modular Retrieval-Augmented Generation (RAG) system implemented from scratch u
 - Embedding cache
 - FAISS vector search
 - Persistent FAISS index
+- BM25 retrieval
+- Hybrid Retrieval (Dense + BM25)
+- Reciprocal Rank Fusion (RRF)
 - Cross-Encoder reranking
 - Prompt template system
+- Query rewriting
+- Conversation memory
+- Interactive CLI chat
+- ArXiv paper loader
 - Hugging Face LLM integration
 - Source references in answers
 - Dependency Injection architecture
@@ -60,25 +67,29 @@ RAG-From-Scratch
 ├── generation/
 │   ├── prompt_builder.py
 │   └── prompts/
-│       └── default.txt
 │
 ├── images/
+│
 ├── ingestion/
 │   ├── text_loader.py
 │   ├── pdf_loader.py
 │   ├── markdown_loader.py
 │   ├── html_loader.py
+│   ├── arxiv_loader.py
 │   ├── directory_loader.py
 │   └── loader_factory.py
 │
 ├── llm/
+├── memory/
 ├── models/
+│
 ├── output/
 │   ├── cache/
 │   └── faiss/
 │
 ├── pipeline/
 ├── retrieval/
+├── rewriter/
 ├── tokenization/
 ├── vector_store/
 │
@@ -143,27 +154,39 @@ python main.py
 
 ```text
 Documents
-    ↓
-Loader Factory
-    ↓
-Document Loader
-    ↓
+      │
+      ▼
+Loaders
+      │
+      ▼
 Chunker
-    ↓
+      │
+      ▼
 Embedding Cache
-    ↓
+      │
+      ▼
 Embedder
-    ↓
-FAISS Vector Store
-    ↓
-Retriever
-    ↓
+      │
+      ▼
+FAISS ─────┐
+           │
+BM25 ──────┤
+           ▼
+Hybrid Retrieval (RRF)
+           │
+           ▼
 Cross Encoder Reranker
-    ↓
-Prompt Template
-    ↓
+           │
+           ▼
+Prompt Builder
+           │
+           ▼
 LLM
-    ↓
+           │
+           ▼
+Conversation Memory
+           │
+           ▼
 Response + Sources
 ```
 
@@ -204,14 +227,25 @@ Response + Sources
 - Prompt template system
 - Automatic FAISS reuse
 
-### v2.0 🚀
+### v2.0 ✅
 
 - ArXiv Loader
-- BM25 Search
-- Hybrid Search
+- BM25 Retrieval
+- Hybrid Retrieval (Dense + BM25)
+- Reciprocal Rank Fusion (RRF)
+- Query Rewriter
 - Conversation Memory
-- Chat UI
+- Interactive CLI Chat
+
+### v3.0 🚀
+
 - Agentic RAG
+- Tool Calling
+- Calculator Tool
+- Python Tool
+- Web Search
+- Streaming Responses
+- Web UI
 
 ---
 
@@ -222,6 +256,7 @@ Response + Sources
 - Hugging Face Transformers
 - Sentence Transformers
 - FAISS
+- rank-bm25
 - tiktoken
 - pypdf
 - BeautifulSoup4
@@ -232,9 +267,9 @@ Response + Sources
 
 Coming soon...
 
-- Chat UI
+- Web UI
 - Agentic RAG
-- Hybrid Search
+- Tool Calling
 
 ---
 
